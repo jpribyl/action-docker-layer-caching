@@ -16,27 +16,27 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/setup-node@v1
+    - uses: actions/setup-node@v3
       with:
-        node-version: 12.x
+        node-version: 16.x
 
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
     
     - name: Output info
       id: info
       run: |
         if [ '${{ github.event_name }}' = 'pull_request' ]; then
-          echo '::set-output name=commit_message::'
+          echo "commit_message=" >> $GITHUB_OUTPUT
           exit 0
         fi
-        echo '::set-output name=commit_message::[auto]'
+        echo "commit_message=[auto]" >> $GITHUB_OUTPUT
 
-    - uses: satackey/push-prebuilt-action@v0.2.0-beta3
+    - uses: jpribyl/push-prebuilt-action@v0.2.3
       with:
         commit-message: ${{ steps.info.outputs.commit_message }}
         push-branch: '{branch}-release'
 
-    - uses: actions/upload-artifact@v2
+    - uses: actions/upload-artifact@v3
       if: github.event_name != 'delete'
       with:
         name: built
@@ -44,7 +44,7 @@ jobs:
 
     - name: Output matrix
       id: set_matrix
-      uses: actions/github-script@v2
+      uses: actions/github-script@v6
       with:
         script: |
           return {
@@ -69,12 +69,12 @@ jobs:
               }, {
                 inspect_image: 'nothing',
                 os: 'ubuntu-latest',
-                prepare_command: 'docker tag node:12 nothing',
+                prepare_command: 'docker tag node:16 nothing',
                 build_command: ':',
               }, {
                 inspect_image: 'nothing',
                 os: 'windows-latest',
-                prepare_command: 'docker tag mcr.microsoft.com/windows/nanoserver:1809 nothing',
+                prepare_command: 'docker pull mcr.microsoft.com/windows/nanoserver:1809; docker tag mcr.microsoft.com/windows/nanoserver:1809 nothing',
                 build_command: ':',
               }, {
                 branch: process.env.GITHUB_REF.replace('refs/heads/', '')
@@ -99,18 +99,17 @@ jobs:
     runs-on: ${{ matrix.os }}
 
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
 
     - run: ${{ matrix.prepare_command }}
 
     - name: Download action
-      uses: actions/download-artifact@v2
+      uses: actions/download-artifact@v3
       with:
         name: built
         path: action-dlc
-
     - uses: ./action-dlc
-      name: Run satackey/action-docker-layer-caching@${{ matrix.branch }}
+      name: Run jpribyl/action-docker-layer-caching@${{ matrix.branch }}
       with:
         key: docker-layer-caching-${{ matrix.os }}-${{ matrix.inspect_image }}-sha:${{ github.sha }}-{hash}
 
@@ -123,23 +122,22 @@ jobs:
     runs-on: ${{ matrix.os }}
 
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
 
     - run: ${{ matrix.prepare_command }}
 
     - name: Extract
       id: extract
-      run: |
-        echo "##[set-output name=branch;]${GITHUB_REF#refs/heads/}"
+      run: echo "branch=${GITHUB_REF#refs/heads/}" >> $GITHUB_OUTPUT
 
     - name: Download action
-      uses: actions/download-artifact@v2
+      uses: actions/download-artifact@v3
       with:
         name: built
         path: action-dlc
 
     - uses: ./action-dlc
-      name: Run satackey/action-docker-layer-caching@${{ matrix.branch }}
+      name: Run jpribyl/action-docker-layer-caching@${{ matrix.branch }}
       with:
         key: never-restored-docker-layer-caching-${{ matrix.os }}-${{ matrix.inspect_image }}-sha:${{ github.sha }}-{hash}
         restore-keys: docker-layer-caching-${{ matrix.os }}-${{ matrix.inspect_image }}-sha:${{ github.sha }}-
@@ -149,7 +147,7 @@ jobs:
       run: docker inspect ${{ matrix.inspect_image }}
 
     - name: Get cached image ID
-      run: echo ::set-output name=id::$(docker image ls -q ${{ matrix.inspect_image }})
+      run: echo id=$(docker image ls -q ${{ matrix.inspect_image }}) >> $GITHUB_OUTPUT
       id: cached
 
     - run: ${{ matrix.build_command }}
@@ -158,7 +156,7 @@ jobs:
       run: docker inspect ${{ matrix.inspect_image }}
 
     - name: Show built image ID
-      run: echo ::set-output name=id::$(docker image ls -q ${{ matrix.inspect_image }})
+      run: echo id=$(docker image ls -q ${{ matrix.inspect_image }}) >> $GITHUB_OUTPUT
       id: latest
 
     - name: Compare cached ID and after build ID

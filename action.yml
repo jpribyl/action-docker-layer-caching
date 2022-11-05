@@ -1,4 +1,4 @@
-name: Docker Layer Caching
+name: Docker Layer Caching2
 description: Cache images created between main run and post run
 
 branding:
@@ -24,6 +24,6 @@ inputs:
     default: 'false'
 
 runs:
-  using: node12
+  using: node16
   main: main.ts
   post: post.ts
