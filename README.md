@@ -9,7 +9,7 @@ This GitHub Action uses the [docker save](https://docs.docker.com/engine/referen
 
 ## ⚠️ **Deprecation Notice for `satackey v0.0.11` and older** ⚠️
 
-Both this and the underlying push-prebuilt-action repositories seem to be
+Both this and the underlying [push-prebuilt-action](https://github.com/jpribyl/push-prebuilt-action) repositories seem to be
 abandoned and the old repo is throwing a couple deprecation warnings. v0.1.0
 addresses those. Would be happy to add others on as maintainers as well to
 avoid a repeat of this scenario.
