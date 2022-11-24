@@ -38,6 +38,15 @@ jobs:
     - uses: jpribyl/action-docker-layer-caching@v0.1.0
       # Ignore the failure of a step and avoid terminating the job.
       continue-on-error: true
+      
+    # trigger cache layer invalidation if there is a change
+    - name: Build the Docker image
+      run: docker build . --file app/Dockerfile --tag app
+
+    # trigger cache layer invalidation if there is a change
+    - name: Build the Docker image
+      run: docker build . --file api/Dockerfile --tag api
+
 
     - run: docker-compose up --build
 
