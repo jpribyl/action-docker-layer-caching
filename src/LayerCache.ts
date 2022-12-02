@@ -347,9 +347,9 @@ class LayerCache {
   async getLayerTarFiles(): Promise<string[]> {
     const getTarFilesFromManifest = (manifest: Manifest) => manifest.Layers;
 
-    const tarFilesThatMayDuplicate = (await this.getManifests()).flatMap(
-      getTarFilesFromManifest
-    );
+    const tarFilesThatMayDuplicate: string = (
+      await this.getManifests()
+    ).flatMap(getTarFilesFromManifest);
     const tarFiles = [...new Set(tarFilesThatMayDuplicate)];
     return tarFiles;
   }
