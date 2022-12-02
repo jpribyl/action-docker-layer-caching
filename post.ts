@@ -1,43 +1,68 @@
-import * as core from '@actions/core'
+import * as core from "@actions/core";
 
-import { LayerCache } from './src/LayerCache'
-import { ImageDetector } from './src/ImageDetector'
-import { assertType } from 'typescript-is'
+import { LayerCache } from "./src/LayerCache";
+import { ImageDetector } from "./src/ImageDetector";
 
 const main = async () => {
-  if (JSON.parse(core.getInput('skip-save', { required: true }))) {
-    core.info('Skipping save.')
-    return
+  if (JSON.parse(core.getInput("skip-save", { required: true }))) {
+    core.info("Skipping save.");
+    return;
   }
 
-  const primaryKey = core.getInput('key', { required: true })
+  const primaryKey = core.getInput("key", { required: true });
 
-  const restoredKey = JSON.parse(core.getState(`restored-key`))
-  const alreadyExistingImages = JSON.parse(core.getState(`already-existing-images`))
-  const restoredImages = JSON.parse(core.getState(`restored-images`))
+  const restoredKey = JSON.parse(core.getState(`restored-key`));
+  const alreadyExistingImages = JSON.parse(
+    core.getState(`already-existing-images`)
+  );
+  const restoredImages = JSON.parse(core.getState(`restored-images`));
 
-  assertType<string>(restoredKey)
-  assertType<string[]>(alreadyExistingImages)
-  assertType<string[]>(restoredImages)
+  if (typeof restoredKey !== "string") {
+    throw Error(
+      `restoredKey is not of type string, instead it is of type ${typeof restoredKey}`
+    );
+  }
+  alreadyExistingImages.map((image: string) => {
+    if (typeof image !== "string") {
+      throw Error(
+        `alreadyExistingImage is not of type string, instead it is of type ${typeof image}`
+      );
+    }
+  });
+  restoredImages.map((image: string) => {
+    if (typeof image !== "string") {
+      throw Error(
+        `restoredImage is not of type string, instead it is of type ${typeof image}`
+      );
+    }
+  });
 
-  const imageDetector = new ImageDetector()
+  const imageDetector = new ImageDetector();
 
-  const existingAndRestoredImages = alreadyExistingImages.concat(restoredImages)
-  const newImages = await imageDetector.getImagesShouldSave(existingAndRestoredImages)
+  const existingAndRestoredImages =
+    alreadyExistingImages.concat(restoredImages);
+  const newImages = await imageDetector.getImagesShouldSave(
+    existingAndRestoredImages
+  );
   if (newImages.length < 1) {
-    core.info(`There is no image to save.`)
-    return
+    core.info(`There is no image to save.`);
+    return;
   }
 
-  const imagesToSave = await imageDetector.getImagesShouldSave(alreadyExistingImages)
-  const layerCache = new LayerCache(imagesToSave)
-  layerCache.concurrency = parseInt(core.getInput(`concurrency`, { required: true }), 10)
+  const imagesToSave = await imageDetector.getImagesShouldSave(
+    alreadyExistingImages
+  );
+  const layerCache = new LayerCache(imagesToSave);
+  layerCache.concurrency = parseInt(
+    core.getInput(`concurrency`, { required: true }),
+    10
+  );
 
-  await layerCache.store(primaryKey)
-  await layerCache.cleanUp()
-}
+  await layerCache.store(primaryKey);
+  await layerCache.cleanUp();
+};
 
-main().catch(e => {
-  console.error(e)
-  core.setFailed(e)
-})
+main().catch((e) => {
+  console.error(e);
+  core.setFailed(e);
+});
