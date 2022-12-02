@@ -1,9 +1,9 @@
 {
   "name": "action-docker-layer-cache",
-  "version": "0.0.0",
+  "version": "0.1.1",
   "main": "index.ts",
-  "repository": "https://github.com/satackey/action-docker-layer-caching.git",
-  "author": "satackey <21271711+satackey@users.noreply.github.com>",
+  "repository": "https://github.com/jpribyl/action-docker-layer-caching.git",
+  "author": "jpribyl <jpribyl@users.noreply.github.com>",
   "license": "MIT",
   "dependencies": {
     "@actions/cache": "^3.0.6",
