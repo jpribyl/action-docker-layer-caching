@@ -15,6 +15,6 @@ export async function loadRawManifests(rootPath: string) {
 
 export async function loadManifests(path: string) {
   const raw = await loadRawManifests(path);
-  const manifests = JSON.parse(raw.toString());
+  const manifests = JSON.parse(raw.toString()) satisfies Manifests;
   return manifests;
 }
