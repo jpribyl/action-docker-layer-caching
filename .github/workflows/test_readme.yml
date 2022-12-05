@@ -3,7 +3,8 @@ name: Readme Test
 on:
   push: 
     branches:
-    - master
+    - main
+  workflow_dispatch:
   schedule:
   - cron: 0 0 */3 * *
 
@@ -18,7 +19,7 @@ jobs:
     steps:
     - name: Output matrix
       id: set_matrix
-      uses: actions/github-script@v2
+      uses: actions/github-script@v6
       with:
         script: |
           return {
@@ -43,13 +44,13 @@ jobs:
               }, {
                 inspect_image: 'nothing',
                 os: 'ubuntu-latest',
-                prepare_command: 'docker tag node:12 nothing',
-                build_command: ':',
+                prepare_command: 'docker pull node:12',
+                build_command: 'docker tag node:12 nothing',
               }, {
                 inspect_image: 'nothing',
                 os: 'windows-latest',
-                prepare_command: 'docker tag mcr.microsoft.com/windows/nanoserver:1809 nothing',
-                build_command: ':',
+                prepare_command: 'docker pull mcr.microsoft.com/windows/nanoserver:1809',
+                build_command: 'docker tag mcr.microsoft.com/windows/nanoserver:1809 nothing',
               }, {
                 branch: process.env.GITHUB_REF.replace('refs/heads/', '')
               }
@@ -73,11 +74,11 @@ jobs:
     runs-on: ${{ matrix.os }}
 
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
 
     - run: ${{ matrix.prepare_command }}
 
-    - uses: jpribyl/action-docker-layer-caching@master-release
+    - uses: jpribyl/action-docker-layer-caching@main-release
       with:
         key: docker-layer-caching-${{ github.workflow }}-${{ matrix.os }}-${{ matrix.inspect_image }}-sha:${{ github.sha }}-{hash}
         restore-keys: ''
@@ -91,11 +92,11 @@ jobs:
     runs-on: ${{ matrix.os }}
 
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
 
     - run: ${{ matrix.prepare_command }}
 
-    - uses: jpribyl/action-docker-layer-caching@master-release
+    - uses: jpribyl/action-docker-layer-caching@main-release
       with:
         key: never-restored-docker-layer-caching-${{ github.workflow }}-${{ matrix.os }}-${{ matrix.inspect_image }}-sha:${{ github.sha }}-{hash}
         restore-keys: docker-layer-caching-${{ github.workflow }}-${{ matrix.os }}-${{ matrix.inspect_image }}-sha:${{ github.sha }}-
