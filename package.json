@@ -20,7 +20,7 @@
   "devDependencies": {
     "@types/node": "18.11.10",
     "@types/string-format": "^2.0.0",
-    "@vercel/ncc": "^0.34.0",
+    "@vercel/ncc": "^0.36.0",
     "ts-node": "10.9.1",
     "ttypescript": "^1.5.13",
     "typescript": "4.9.3"
