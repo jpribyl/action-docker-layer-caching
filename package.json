@@ -18,7 +18,7 @@
     "typescript-is": "^0.19.0"
   },
   "devDependencies": {
-    "@types/node": "18.11.18",
+    "@types/node": "18.11.19",
     "@types/string-format": "^2.0.0",
     "@vercel/ncc": "^0.36.0",
     "ts-node": "10.9.1",
