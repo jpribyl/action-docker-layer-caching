@@ -2,10 +2,10 @@
 # yarn lockfile v1
 
 
-"@actions/cache@^3.1.1":
-  version "3.1.1"
-  resolved "https://registry.yarnpkg.com/@actions/cache/-/cache-3.1.1.tgz#f65e9ebf0fda271f8c6ff9a33a3f5c0e5cef614b"
-  integrity sha512-gOUdNap8FvlpoQAMYWiNPi9Ltt7jKWv9RuUVKg9cp/vQA9qTXoKiBkTioUAgIejh/qf7jrojYn3lCyIRIsoSeQ==
+"@actions/cache@^3.1.3":
+  version "3.1.3"
+  resolved "https://registry.yarnpkg.com/@actions/cache/-/cache-3.1.3.tgz#6521648a259dab2ce981cdaadf98bf192293b569"
+  integrity sha512-5YbATJUS6nVs9EkpK7JaliC3G5koKdJT99NLreL0gJlznudzZzXGNIheW5+HUT9C2DBvubOxYIyfX4v2UpZWrA==
   dependencies:
     "@actions/core" "^1.10.0"
     "@actions/exec" "^1.0.1"
