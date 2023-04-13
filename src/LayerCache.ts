@@ -278,7 +278,7 @@ class LayerCache {
 
   async cleanUp() {
     if (existsSync(this.getImagesDir())) {
-      await fs.rm(this.getImagesDir(), { recursive: true });
+      await fs.rm(this.getImagesDir(), { recursive: true, force: true });
     }
   }
 
