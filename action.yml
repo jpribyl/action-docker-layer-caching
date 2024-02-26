@@ -24,6 +24,6 @@ inputs:
     default: 'false'
 
 runs:
-  using: node16
+  using: node20
   main: main.ts
   post: post.ts
